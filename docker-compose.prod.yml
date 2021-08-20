@@ -1,0 +1,57 @@
+version: "2.1"
+
+services:
+  api:
+    build:
+      context: .
+    command: "api.py"
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  bot:
+    build:
+      context: .
+    command: "twitch_bot.py"
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: .
+    command: "worker.py"
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  db:
+    image: mongo
+    container_name: mongodb
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - store:/data/db
+    ports:
+      - 27017:27017
+    restart: unless-stopped
+
+  redis:
+    image: redis:6-alpine
+
+  dashboard:
+    build: ./project
+    command: flower --app=worker.celery --port=5555 --broker=redis://redis:6379/0
+    ports:
+      - 5556:5555
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - web
+      - redis
+      - worker
+
+volumes:
+  store:

@@ -1,10 +1,11 @@
 import time
+from os import getenv
 
 from pymongo import MongoClient
 
 
-DB_URL = "0.0.0.0:27017"
-DB_NAME = "test"
+DB_URL = getenv("DB_URL", "0.0.0.0:27017")
+DB_NAME = getenv("DB_NAME", "test")
 
 
 def create_connection():
@@ -15,6 +16,16 @@ def create_connection():
 def list_sessions(cnxn):
     cursor = cnxn.sessions.find({})
     return list(cursor)
+
+
+def last_session(cnxn):
+    cursor = cnxn.find_one().sort({'_id': -1}).limit(1)
+    return cursor
+
+
+def get_session(cnxn, name):
+    cursor = cnxn.sessions.find_one({"name": name})
+    return cursor
 
 
 def create_session(cnxn, name):
