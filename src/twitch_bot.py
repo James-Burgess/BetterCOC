@@ -1,12 +1,14 @@
+from os import getenv
+
 from twitchio.ext import commands
 
 class Bot(commands.Bot):
 
     def __init__(self):
         super().__init__(
-            token='',
+            token=getenv("TWITCH_TOKEN"),
             prefix='?',
-            initial_channels=[""]
+            initial_channels=[getenv("TWITCH_CHANNEL")]
         )
 
     async def event_ready(self):

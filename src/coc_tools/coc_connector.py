@@ -3,7 +3,7 @@ import json
 from os import getenv
 import jmespath as jq
 
-BASE_URL = "https://www.codingame.com"
+BASE_URL = "https://www.codingame.com/services"
 
 
 class CoC:
@@ -12,7 +12,7 @@ class CoC:
         self.uid = self.login()
 
     def login(self):
-        uri = f"{BASE_URL}/services/Codingamer/loginSiteV2"
+        uri = f"{BASE_URL}/Codingamer/loginSiteV2"
 
         email = getenv("COC_EMAIL")
         password = getenv("COC_PASSWORD")
@@ -30,7 +30,7 @@ class CoC:
         raise NotImplemented
 
     def get_game_stats(self, match_id):
-        uri = f"{BASE_URL}/services/ClashOfCode/findClashReportInfoByHandle"
+        uri = f"{BASE_URL}/ClashOfCode/findClashReportInfoByHandle"
         payload = [match_id]
 
         response = self._post(uri, payload)
@@ -58,7 +58,7 @@ class CoC:
         return {"_id": match_id, **payload}
 
     def get_test(self, match_id):
-        uri = "https://www.codingame.com/services/TestSession/startTestSession"
+        uri = f"{BASE_URL}/TestSession/startTestSession"
         payload = [match_id]
         response = self._post(uri, payload)
         print(response)

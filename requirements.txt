@@ -4,3 +4,9 @@ requests
 python-dotenv
 jmespath
 pymongo
+loguru
+celery
+redis
+uvicorn
+fastapi
+flower
