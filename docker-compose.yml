@@ -1,0 +1,27 @@
+version: "2.1"
+
+services:
+  bot:
+    build:
+      context: .
+    command: "main.py"
+    volumes:
+      - ./src:/src
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  db:
+    image: mongo
+    container_name: mongodb
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - store:/data/db
+    ports:
+      - 27017:27017
+    restart: unless-stopped
+
+volumes:
+  store:

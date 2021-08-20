@@ -1,0 +1,6 @@
+click
+twitchio
+requests
+python-dotenv
+jmespath
+pymongo
