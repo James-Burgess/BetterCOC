@@ -19,7 +19,7 @@ class CoC:
         payload = [email, password, True]
 
         response = self._post(uri, payload)
-        uid = jq.search('codinGamer.userId', response)
+        uid = jq.search("codinGamer.userId", response)
 
         return uid
 

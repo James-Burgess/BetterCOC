@@ -16,7 +16,7 @@
     <div x-text="message"></div>
 </div>
 
-<div x-data="{data: 'loading...', sessionName: ''}"
+<div x-data="{data: [], sessionName: '', sessionData: false}"
      x-init="
         fetch('http://localhost:8000/sessions/')
             .then(r => r.json())
@@ -35,17 +35,48 @@
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         }
-    }).then(fetch('http://localhost:8000/sessions/')
-            .then(r => r.json())
-            .then(r => data = r))
+    })
+    .then(await new Promise(r => setTimeout(r, 500)))
+    .then(fetch('http://localhost:8000/sessions/')
+        .then(r => r.json())
+        .then(r => data = r)
+    ).then(fetch('http://localhost:8000/sessions/latest/')
+        .then(r => r.json() )
+        .then(r => sessionData = r)
+    )
     ">Create new</button>
 
-    <template x-for="session in data">
+    <template x-for="session in data" x-cloak>
+        <ul>
+            <li x-text="session.name" @click="
+                fetch('http://localhost:8000/sessions/'+session.id+'/')
+                    .then(r => r.json() )
+                    .then(r => sessionData = r)
+            "></li>
+        </ul>
+    </template>
+
+    <template x-if="!loading" x-data="{loading:true}" x-init="
+        fetch('http://localhost:8000/sessions/latest/')
+            .then(r => r.json() )
+            .then(r => sessionData = r)
+            .then(_=>loading=false)
+        ">
         <div>
-            <small x-text="session.id"></small>
-            <h1 x-text="session.name"></h1>
+            <h1>
+                Current Session: <span x-text="sessionData.name"/>
+            </h1>
+
+            <div>
+                <p>Created on <span x-text="sessionData.date"></span></p>
+            </div>
         </div>
     </template>
+
+
+
+
+
 </div>
 
 <!--<div x-data="{ open: false }">-->

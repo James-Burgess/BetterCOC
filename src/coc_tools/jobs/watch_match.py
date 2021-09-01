@@ -21,7 +21,7 @@ def watch_game(game_id: str, session_id: str) -> dict:
     """
     coc = CoC()
     cnxn = db.create_connection()
-    
+
     game = db.get_game(cnxn, game_id)
 
     if game and game.get("finished"):

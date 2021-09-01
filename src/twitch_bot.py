@@ -12,8 +12,8 @@ class Bot(commands.Bot):
         # self.session = self.get_last_session()
         super().__init__(
             token=getenv("TWITCH_TOKEN"),
-            prefix='?',
-            initial_channels=[getenv("TWITCH_CHANNEL")]
+            prefix="?",
+            initial_channels=[getenv("TWITCH_CHANNEL")],
         )
 
     def get_last_session(self):
@@ -22,19 +22,19 @@ class Bot(commands.Bot):
 
     async def event_ready(self):
         # We are logged in and ready to chat and use commands...
-        print(f'Logged in as | {self.nick}')
+        print(f"Logged in as | {self.nick}")
 
     async def event_message(self, message):
         if message.echo:
             return
 
-        print(message.timestamp, end=' - ')
-        print(message.author.name, end=':   ')
+        print(message.timestamp, end=" - ")
+        print(message.author.name, end=":   ")
         print(message.content)
 
         await self.handle_commands(message)
 
-    @commands.command(aliases=['h'])
+    @commands.command(aliases=["h"])
     async def help(self, ctx: commands.Context):
         """
         Help command to list all commands
@@ -42,9 +42,9 @@ class Bot(commands.Bot):
         :return: None
         """
         message = [
-            f'/me Hello, @{ctx.author.name}!',
+            f"/me Hello, @{ctx.author.name}!",
             "?h[elp] => display all commands",
-            "?hello|hi => Be greeted by the bot"
+            "?hello|hi => Be greeted by the bot",
         ]
 
         for m in message:

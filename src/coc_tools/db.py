@@ -1,7 +1,8 @@
 import time
 from os import getenv
 
-from pymongo import MongoClient
+from pymongo import MongoClient, DESCENDING
+from bson.objectid import ObjectId
 
 
 DB_URL = getenv("DB_URL", "0.0.0.0:27017")
@@ -19,21 +20,17 @@ def list_sessions(cnxn):
 
 
 def last_session(cnxn):
-    cursor = cnxn.find_one().sort({'_id': -1}).limit(1)
-    return cursor
+    cursor = cnxn.sessions.find().sort('date', direction=DESCENDING).limit(1)
+    return list(cursor)[0]
 
 
-def get_session(cnxn, name):
-    cursor = cnxn.sessions.find_one({"name": name})
+def get_session(cnxn, id):
+    cursor = cnxn.sessions.find_one({"_id": ObjectId(id)})
     return cursor
 
 
 def create_session(cnxn, name):
-    cnxn.sessions.insert({
-        "date": time.time_ns(),
-        "name": name,
-        "games": []
-    })
+    cnxn.sessions.insert({"date": time.time_ns(), "name": name, "games": []})
 
 
 def list_games(cnxn):
