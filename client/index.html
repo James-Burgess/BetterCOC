@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Clash of code</title>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+</head>
+<body>
+<div x-data="{message: 'loading...'}"
+     x-init="
+        fetch('http://localhost:8000/')
+            .then(r => r.json())
+            .then(r => message = r.message)
+    "
+    >
+    <div x-text="message"></div>
+</div>
+
+<div x-data="{data: 'loading...', sessionName: ''}"
+     x-init="
+        fetch('http://localhost:8000/sessions/')
+            .then(r => r.json())
+            .then(r => data = r)
+    "
+    >
+    <h1>
+        All sessions
+    </h1>
+      <input type="text" x-model="sessionName"/>
+    <button @click="fetch('http://localhost:8000/sessions/',
+    {
+        method: 'post',
+        body: JSON.stringify({ name: sessionName }),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+    }).then(fetch('http://localhost:8000/sessions/')
+            .then(r => r.json())
+            .then(r => data = r))
+    ">Create new</button>
+
+    <template x-for="session in data">
+        <div>
+            <small x-text="session.id"></small>
+            <h1 x-text="session.name"></h1>
+        </div>
+    </template>
+</div>
+
+<!--<div x-data="{ open: false }">-->
+<!--    <button @click="open = true">Expand</button>-->
+
+<!--    <span x-show="open">-->
+<!--      Lively Content...-->
+<!--    </span>-->
+<!--</div>-->
+
+</body>
+</html>

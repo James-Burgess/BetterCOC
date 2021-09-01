@@ -9,7 +9,7 @@ from coc_tools import db
 class Bot(commands.Bot):
     def __init__(self):
         self.cnxn = db.create_connection()
-        self.session = self.get_last_session()
+        # self.session = self.get_last_session()
         super().__init__(
             token=getenv("TWITCH_TOKEN"),
             prefix='?',
