@@ -2,7 +2,7 @@ from os import getenv
 
 from twitchio.ext import commands
 
-from coc_tools.jobs.greeting import greet
+from coc_tools.jobs.responses import greet
 from coc_tools import db
 
 

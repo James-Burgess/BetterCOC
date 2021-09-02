@@ -1,12 +1,36 @@
 from time import sleep
-import json
 
 from loguru import logger
 
 from ..coc_connector import CoC
 from .. import db
+from worker import celery
 
 
+def start_and_watch(session_id):
+    logger.info("starting game")
+    game_id = create_game(session_id)
+
+    logger.info("starting watcher")
+    watch_id = watch_game.delay(game_id, session_id)
+
+    return game_id, watch_id
+
+
+def create_game(session_id):
+    """
+    Create a game on the coc server and save to the db
+    :return: id of the game in the DB
+    """
+    coc = CoC()
+    cnxn = db.create_connection()
+
+    game_id = coc.create_match()
+    db.add_game(cnxn, session_id, game_id)
+    return game_id
+
+
+@celery.task(name="watch_game")
 def watch_game(game_id: str, session_id: str) -> dict:
     """
     Collect stats on game until complete:
@@ -30,7 +54,7 @@ def watch_game(game_id: str, session_id: str) -> dict:
     elif not game:
         db.add_game(cnxn, session_id, game_id)
 
-    test_saved = True
+    test_saved = False
 
     while 1:
         stats = coc.get_game_stats(game_id)
@@ -54,14 +78,3 @@ def watch_game(game_id: str, session_id: str) -> dict:
             logger.debug("Waiting for match to start")
 
         sleep(5)
-
-
-def _test():
-    watch_game("", "test-session")
-    cnxn = db.create_connection()
-    game = db.list_games(cnxn)[-1]
-    logger.info(json.dumps(game, indent=4, sort_keys=True))
-
-
-if __name__ == "__main__":
-    _test()
