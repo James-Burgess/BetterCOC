@@ -1,72 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Clash of code</title>
-    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
-</head>
-<body>
-
-<div x-data="{data: [], sessionName: '', sessionData: false}"
-     x-init="
-        fetch('http://localhost:8000/sessions/')
-            .then(r => r.json())
-            .then(r => data = r)
-    "
->
-    <h1>
-        All sessions
-    </h1>
-    <input type="text" x-model="sessionName"/>
-    <button
-    @click="fetch('http://localhost:8000/sessions/',
-        {
-            method: 'post',
-            body: JSON.stringify({ name: sessionName }),
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            }
-        })
-        .then(await new Promise(r => setTimeout(r, 500)))
-        .then(fetch('http://localhost:8000/sessions/')
-            .then(r => r.json())
-            .then(r => data = r)
-        ).then(fetch('http://localhost:8000/sessions/latest/')
-            .then(r => r.json() )
-            .then(r => sessionData = r)
-        )"
-    >
-        Create new
-    </button>
-
-    <template x-for="session in data" x-cloak>
-        <ul>
-            <li x-text="session.name" @click="
-                fetch('http://localhost:8000/sessions/'+session.id+'/')
-                    .then(r => r.json() )
-                    .then(r => sessionData = r)
-            "></li>
-        </ul>
-    </template>
-
-    <template x-if="!loading" x-data="{loading:true}" x-init="
-        fetch('http://localhost:8000/sessions/latest/')
-            .then(r => r.json() )
-            .then(r => sessionData = r)
-            .then(_=>loading=false)
-        ">
-        <div>
-            <h1>
-                Current Session: <span x-text="sessionData.name"/>
-            </h1>
-
-            <div>
-                <p>Created on <span x-text="sessionData.date"></span></p>
-            </div>
-            <button @click="console.log(sessionData.id)">New Game</button>
-        </div>
-    </template>
-</div>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite App</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
 </html>

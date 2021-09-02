@@ -4,10 +4,11 @@ services:
   client:
     build:
       context: ./client
+    command: dev --host
     volumes:
       - ./client:/app
     ports:
-      - "8080:8080"
+      - "3000:3000"
     depends_on:
       - api
 
